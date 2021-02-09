@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 
 
 class DCMotor:
-    # DC Motor driver class driven by PWM
+    """DC Motor driver class driven by PWM"""
 
     def __init__(self, forPin, bacPin):
         # Setup GPIO
@@ -23,13 +23,13 @@ class DCMotor:
         self.stop()
 
     def forward(self, speed=None):
-        # Run motor forward
+        """Run motor forward"""
         if speed is None:
             speed = self._maxSpeed
         self.run(speed)
 
     def reverse(self, speed=None):
-        # Run motor Backward
+        """Run motor Backward"""
         if speed is None:
             speed = self._maxSpeed
         self.run(speed)
@@ -39,8 +39,8 @@ class DCMotor:
         self.run(0)
 
     def run(self, speed=None):
-        # Start the motor. If no speed given
-        # start at max speed.
+        """Start the motor. If no speed given
+        start at max speed."""
         if speed is None:
             speed = self._maxSpeed
 
