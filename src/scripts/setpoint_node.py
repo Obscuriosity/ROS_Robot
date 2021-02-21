@@ -5,7 +5,7 @@ from std_msgs.msg import Float64
 
 
 def setpoint():
-    pub = rospy.Publisher('/setpoint', Float64, queue_size=10)
+    pub = rospy.Publisher('setpoint', Float64, queue_size=10)
     rospy.init_node('setpoint_node')
     rate = rospy.Rate(1)  # 1hz
     while not rospy.is_shutdown():
