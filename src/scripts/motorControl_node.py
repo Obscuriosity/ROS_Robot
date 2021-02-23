@@ -35,23 +35,23 @@ def rfencCB(encrf):
 def lmotorCB(lpwm):
     global leftPWM
     leftPWM += lpwm.data
-    print("Left PWM",leftPWM)
+    print("Left PWM", leftPWM)
     leftM.run(leftPWM)
 
 
 def rmotorCB(rpwm):
     global rightPWM
     rightPWM += rpwm.data
-    print("Right PWM",rightPWM)
+    print("Right PWM", rightPWM)
     rightM.run(rightPWM)
 
 
 rate = rospy.Rate(10)  # 10hz
-lfencoderSub = rospy.Subscriber('enc_lf', Float64,lfencCB)
-lmotorSub = rospy.Subscriber('lcontrol_effort', Float64,lmotorCB)
+lfencoderSub = rospy.Subscriber('enc_lf', Float64, lfencCB)
+lmotorSub = rospy.Subscriber('lcontrol_effort', Float64, lmotorCB)
 lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
-rfencoderSub = rospy.Subscriber('enc_rf', Float64,rfencCB)
-rmotorSub = rospy.Subscriber('rcontrol_effort', Float64,rmotorCB)
+rfencoderSub = rospy.Subscriber('enc_rf', Float64, rfencCB)
+rmotorSub = rospy.Subscriber('rcontrol_effort', Float64, rmotorCB)
 rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
 
 rospy.spin()

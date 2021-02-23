@@ -15,9 +15,11 @@ class DCMotor:
 
         frequency = 20
         maxSpeed = 100
+        minSpeed = 0
 
         self._frequency = frequency
         self._maxSpeed = maxSpeed
+        self._minSpeed = minSpeed
         self._forPWM = GPIO.PWM(forPin, frequency)
         self._bacPWM = GPIO.PWM(bacPin, frequency)
         self.stop()
@@ -25,13 +27,13 @@ class DCMotor:
     def forward(self, speed=None):
         """Run motor forward"""
         if speed is None:
-            speed = self._maxSpeed
+            speed = self._minSpeed
         self.run(speed)
 
     def reverse(self, speed=None):
         """Run motor Backward"""
         if speed is None:
-            speed = self._maxSpeed
+            speed = self._minSpeed
         self.run(speed)
 
     def stop(self):
@@ -42,7 +44,7 @@ class DCMotor:
         """Start the motor. If no speed given
         start at max speed."""
         if speed is None:
-            speed = self._maxSpeed
+            speed = self._minSpeed
 
         # Ensure speed is within limits + or - max speed
         speed = min(self._maxSpeed, speed)
