@@ -92,13 +92,13 @@ class diffDrive:
     def lfencCB(self, enclf):
         stateData = enclf.data - self._leftprevStateData
         self._leftprevStateData = enclf.data
-        print("L previous ", self._leftprevStateData, "State", stateData)
+        print("----------Left Ticks ", stateData)
         self._lstatePub.publish(stateData)
 
     def rfencCB(self, encrf):
         stateData = encrf.data - self._rightprevStateData
         self._rightprevStateData = encrf.data
-        print("R previous ", self._rightprevStateData, "State", stateData)
+        print("---------Right Ticks", stateData)
         self._rstatePub.publish(stateData)
 
     def lmotorCB(self, lpwm):
@@ -147,6 +147,7 @@ class diffDrive:
         #
         leftSetpoint = (left_target_rpm/600) * self._leftTPR
         rightSetpoint = (right_target_rpm/600) * self._rightTPR
+        print("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
         #
         # Publish setpoints
         #
