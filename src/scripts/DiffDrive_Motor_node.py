@@ -145,8 +145,8 @@ class diffDrive:
         # convert rpm to ticks per interval: interval is .1 seconds
         # 1 rotation is 990ticks
         #
-        leftSetpoint = (left_target_rpm/600) * _leftTPR
-        rightSetpoint = (right_target_rpm/600) * _rightTPR
+        leftSetpoint = (left_target_rpm/600) * self._leftTPR
+        rightSetpoint = (right_target_rpm/600) * self._rightTPR
         #
         # Publish setpoints
         #
