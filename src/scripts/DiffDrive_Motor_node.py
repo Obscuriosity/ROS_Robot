@@ -54,6 +54,8 @@ class diffDrive:
         self._cmd_velSub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_CB)
         self._joySub = rospy.Subscriber('joy', Joy, self._joyCB)
 
+        self._lsetpointPub = rospy.Publisher('lsetpoint', Float64, queue_size=10)
+        self._rsetpointPub = rospy.Publisher('rsetpoint', Float64, queue_size=10)
         self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
         self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
 
@@ -140,15 +142,16 @@ class diffDrive:
         left_target_rpm = (left_mps * 60.0) / (math.pi * self._wheel_diameter)
         right_target_rpm = (right_mps * 60.0) / (math.pi * self._wheel_diameter)
         #
-        left_percentage = (left_target_rpm / self._left_max_rpm) * 100.0
-        right_percentage = (right_target_rpm / self._right_max_rpm) * 100.0
+        # convert rpm to ticks per interval: interval is .1 seconds
+        # 1 rotation is 990ticks
         #
-        # clip to +- 100%
-        left_percentage = max(min(left_percentage, 100.0), -100.0)
-        right_percentage = max(min(right_percentage, 100.0), -100.0)
+        leftSetpoint = (left_target_rpm/600) * _leftTPR
+        rightSetpoint = (right_target_rpm/600) * _rightTPR
         #
-        self._rightWheel.run(right_percentage)
-        self._leftWheel.run(left_percentage)
+        # Publish setpoints
+        #
+        self._lsetpointPub.publish(leftSetpoint)
+        self._rsetpointPub.publish(rightSetpoint)
 
 
 def main():
