@@ -30,6 +30,7 @@ class diffDrive:
                  leftMax_RPM=107, rightMaxRPM=107,
                  leftTicksPerRotation=990, rightTicksPerRotation=990):
 
+        #  Physical properties of the differential motor pair:
         self._leftMaxRPM = leftMax_RPM
         self._rightMaxRPM = rightMaxRPM
         self._wheel_diameter = wheel_diameter
@@ -39,8 +40,16 @@ class diffDrive:
         self._leftWheel = DCM(lfPin, lbPin)
         self._rightWheel = DCM(rfPin, rbPin)
 
-        self._leftprevStateData = 0.0
-        self._rightprevStateData = 0.0
+        self._lstate = 0.0
+        self._rstate = 0.0
+        self._lForstateData = 0.0
+        self._lBacstateData = 0.0
+        self._rForstateData = 0.0
+        self._rBacstateData = 0.0
+        self._lForprevStateData = 0.0
+        self._lBacprevStateData = 0.0
+        self._rForprevStateData = 0.0
+        self._rBacprevStateData = 0.0
         self._leftPWM = 0.0
         self._rightPWM = 0.0
 
@@ -48,7 +57,9 @@ class diffDrive:
         self.spin = 0.0
 
         self._lfencoderSub = rospy.Subscriber('enc_lf', Float64, self.lfencCB)
+        self._lbencoderSub = rospy.Subscriber('enc_lb', Float64, self.lbencCB)
         self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
+        self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
         self._lmotorSub = rospy.Subscriber('lcontrol_effort', Float64, self.lmotorCB)
         self._rmotorSub = rospy.Subscriber('rcontrol_effort', Float64, self.rmotorCB)
         self._cmd_velSub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_CB)
@@ -90,25 +101,39 @@ class diffDrive:
         self._set_motor_speeds()
 
     def lfencCB(self, enclf):
-        stateData = enclf.data - self._leftprevStateData
-        self._leftprevStateData = enclf.data
-        print("----------Left Ticks ", stateData)
-        self._lstatePub.publish(stateData)
+        self._lForstateData = enclf.data - self._lForprevStateData
+        self._lForprevStateData = enclf.data
+        print("----------Left Ticks FOR", self._lForstateData)
+        self._lstate = self._lForstateData - self._lBacstateData
+        self._lstatePub.publish(self._lstate)
+
+    def lbencCB(self, enclb):
+        self._lBacstateData = enclb.data - self._lBacprevStateData
+        self._lBacprevStateData = enclb.data
+        print("----------Left Ticks BAC", self._lBacstateData)
 
     def rfencCB(self, encrf):
-        stateData = encrf.data - self._rightprevStateData
-        self._rightprevStateData = encrf.data
-        print("---------Right Ticks", stateData)
-        self._rstatePub.publish(stateData)
+        self._rForstateData = encrf.data - self._rForprevStateData
+        self._rForprevStateData = encrf.data
+        print("---------Right Ticks FOR", self._rForstateData)
+        self._rstate = self._rForstateData - self._rBacstateData
+        self._rstatePub.publish(self._rstate)
+
+    def rbencCB(self, encrb):
+        self._rBacstateData = encrb.data - self._rBacprevStateData
+        self._rBacprevStateData = encrb.data
+        print("---------Right Ticks BAC", self._rBacstateData)
 
     def lmotorCB(self, lpwm):
         self._leftPWM += lpwm.data
         print("Left PWM", self._leftPWM)
+        self._leftPWM = max(min(self._leftPWM, 100), -100)
         self._leftWheel.run(self._leftPWM)
 
     def rmotorCB(self, rpwm):
         self._rightPWM += rpwm.data
         print("Right PWM", self._rightPWM)
+        self._rightPWM = max(min(self._rightPWM, 100), -100)
         self._rightWheel.run(self._rightPWM)
 
     def max_speed(self):
