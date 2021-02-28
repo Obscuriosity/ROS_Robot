@@ -7,28 +7,12 @@
           <param name="Kp" value="0.4" />
           <param name="Ki" value="0.14" />
           <param name="Kd" value="0.0" />
-        </node>
-    <node
-        name="left_setpoint"
-        pkg="club_bot3"
-        type="setpoint_node.py"
-        ns="left_wheel"
-        respawn="true"
-        output="screen"
-    />
+    </node>
     <node name="right_wheel_pid" pkg="pid" type="controller" ns="right_wheel">
           <param name="Kp" value="0.4" />
           <param name="Ki" value="0.14" />
           <param name="Kd" value="0.0" />
-        </node>
-    <node
-        name="right_setpoint"
-        pkg="club_bot3"
-        type="setpoint_node.py"
-        ns="right_wheel"
-        respawn="true"
-        output="screen"
-    />
+    </node>
     <node
         name="motor_control"
         pkg="club_bot3"
