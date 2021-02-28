@@ -16,7 +16,7 @@
     <node
         name="motor_control"
         pkg="club_bot3"
-        type="motorControl_node.py"
+        type="DiffDrive_Motor_node.py"
         respawn="true"
         launch-prefix="xterm -e"
     />
