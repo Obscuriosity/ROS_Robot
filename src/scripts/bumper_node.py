@@ -20,7 +20,7 @@ class bumpers:
         self._bumperLsub = rospy.Subscriber('bpr_lf', Bool, self.lbprCB)
         self._bumperFsub = rospy.Subscriber('bpr_mf', Bool, self.fbprCB)
         self._bumperRsub = rospy.Subscriber('bpr_rf', Bool, self.rbprCB)
-        self._reaction = rospy.Publisher('reaction', Twist, queue_size=10)
+        self._reaction = rospy.Publisher('cmd_vel', Twist, queue_size=10)
 
     def lbprCB(self, msg):
         if msg.data is True:

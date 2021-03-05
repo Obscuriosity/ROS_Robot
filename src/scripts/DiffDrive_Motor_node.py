@@ -147,32 +147,36 @@ class diffDrive:
         return self.max_speed() / self._wheel_diameter
 
     def _set_motor_speeds(self):
-        #
-        # Figure out the speed of each wheel based on spin: each wheel covers
-        # self._wheel_base meters in one radian, so the target speed for each wheel
-        # in meters per sec is spin (radians/sec) times wheel_base divided by
-        # wheel_diameter
-        #
-        right_twist_mps = self.spin * self._wheel_base / self._wheel_diameter
-        left_twist_mps = -1.0 * self.spin * self._wheel_base / self._wheel_diameter
-        #
-        # Now add in forward motion.
-        #
-        left_mps = self.speed + left_twist_mps
-        right_mps = self.speed + right_twist_mps
-        #
-        # Convert meters/sec into RPM: for each revolution, a wheel travels pi * diameter
-        # meters, and each minute has 60 seconds.
-        #
-        left_target_rpm = (left_mps * 60.0) / (math.pi * self._wheel_diameter)
-        right_target_rpm = (right_mps * 60.0) / (math.pi * self._wheel_diameter)
-        #
-        # convert rpm to ticks per interval: interval is .1 seconds
-        # 1 rotation is 990ticks
-        #
-        leftSetpoint = (left_target_rpm/600) * self._leftTPR
-        rightSetpoint = (right_target_rpm/600) * self._rightTPR
-        print("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
+        if self.speed == 0 and self.spin == 0:
+            self._leftWheel.stop()
+            self._rightWheel.stop()
+        else:
+            #
+            # Figure out the speed of each wheel based on spin: each wheel covers
+            # self._wheel_base meters in one radian, so the target speed for each wheel
+            # in meters per sec is spin (radians/sec) times wheel_base divided by
+            # wheel_diameter
+            #
+            right_twist_mps = self.spin * self._wheel_base / self._wheel_diameter
+            left_twist_mps = -1.0 * self.spin * self._wheel_base / self._wheel_diameter
+            #
+            # Now add in forward motion.
+            #
+            left_mps = self.speed + left_twist_mps
+            right_mps = self.speed + right_twist_mps
+            #
+            # Convert meters/sec into RPM: for each revolution, a wheel travels pi * diameter
+            # meters, and each minute has 60 seconds.
+            #
+            left_target_rpm = (left_mps * 60.0) / (math.pi * self._wheel_diameter)
+            right_target_rpm = (right_mps * 60.0) / (math.pi * self._wheel_diameter)
+            #
+            # convert rpm to ticks per interval: interval is .1 seconds
+            # 1 rotation is 990ticks
+            #
+            leftSetpoint = (left_target_rpm/600) * self._leftTPR
+            rightSetpoint = (right_target_rpm/600) * self._rightTPR
+            print("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
         #
         # Publish setpoints
         #
