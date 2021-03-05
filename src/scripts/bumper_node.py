@@ -17,9 +17,9 @@ class bumpers:
 
         self._vel_msg = Twist()
 
-        self._bumperLsub = rospy.Subscriber('bpr_l', bool, self.lbprCB)
-        self._bumperFsub = rospy.Subscriber('bpr_f', Bool, self.fbprCB)
-        self._bumperRsub = rospy.Subscriber('bpr_r', Bool, self.rbprCB)
+        self._bumperLsub = rospy.Subscriber('bpr_lf', Bool, self.lbprCB)
+        self._bumperFsub = rospy.Subscriber('bpr_mf', Bool, self.fbprCB)
+        self._bumperRsub = rospy.Subscriber('bpr_rf', Bool, self.rbprCB)
         self._reaction = rospy.Publisher('reaction', Twist, queue_size=10)
 
         def lbprCB(self, msg):
@@ -28,12 +28,14 @@ class bumpers:
                 self._reaction.publish(stop())
 
         def fbprCB(self, msg):
-            rospy.loginfo("Front bumper hit")
-            self._reaction.publish(stop())
+            if msg.data is True:
+                rospy.loginfo("Front bumper hit")
+                self._reaction.publish(stop())
 
         def rbprCB(self, msg):
-            rospy.loginfo("Right bumper hit")
-            self._reaction.publish(stop())
+            if msg.data is True:
+                rospy.loginfo("Right bumper hit")
+                self._reaction.publish(stop())
 
         def stop(self):
             self._vel_msg.linear.x = 0
@@ -42,6 +44,14 @@ class bumpers:
             self._vel_msg.angular.x = 0
             self._vel_msg.angular.y = 0
             self._vel_msg.angular.z = 0
+
+        def rotateLeft(self):
+            self._vel_msg.linear.x = 0
+            self._vel_msg.linear.y = 0
+            self._vel_msg.linear.z = 0
+            self._vel_msg.angular.x = 0
+            self._vel_msg.angular.y = 0
+            self._vel_msg.angular.z = 0.01
 
 
 def main():
