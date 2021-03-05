@@ -148,6 +148,8 @@ class diffDrive:
 
     def _set_motor_speeds(self):
         if self.speed == 0 and self.spin == 0:
+            leftSetpoint = 0
+            rightSetpoint = 0
             self._leftWheel.stop()
             self._rightWheel.stop()
         else:
@@ -177,11 +179,11 @@ class diffDrive:
             leftSetpoint = (left_target_rpm/600) * self._leftTPR
             rightSetpoint = (right_target_rpm/600) * self._rightTPR
             print("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
-            #
-            # Publish setpoints
-            #
-            self._lsetpointPub.publish(leftSetpoint)
-            self._rsetpointPub.publish(rightSetpoint)
+        #
+        # Publish setpoints
+        #
+        self._lsetpointPub.publish(leftSetpoint)
+        self._rsetpointPub.publish(rightSetpoint)
 
 
 def main():
