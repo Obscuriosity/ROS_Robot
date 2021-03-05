@@ -177,11 +177,11 @@ class diffDrive:
             leftSetpoint = (left_target_rpm/600) * self._leftTPR
             rightSetpoint = (right_target_rpm/600) * self._rightTPR
             print("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
-        #
-        # Publish setpoints
-        #
-        self._lsetpointPub.publish(leftSetpoint)
-        self._rsetpointPub.publish(rightSetpoint)
+            #
+            # Publish setpoints
+            #
+            self._lsetpointPub.publish(leftSetpoint)
+            self._rsetpointPub.publish(rightSetpoint)
 
 
 def main():
