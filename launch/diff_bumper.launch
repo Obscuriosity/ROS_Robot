@@ -3,6 +3,8 @@
     <remap from="rstate" to="/right_wheel/state"/>
     <remap from="lcontrol_effort" to="/left_wheel/control_effort"/>
     <remap from="rcontrol_effort" to="/right_wheel/control_effort"/>
+    <remap from="lsetpoint" to="/left_wheel/setpoint"/>
+    <remap from="rsetpoint" to="/right_wheel/setpoint"/>
     <node name="left_wheel_pid" pkg="pid" type="controller" ns="left_wheel">
           <param name="Kp" value="0.4" />
           <param name="Ki" value="0.14" />
