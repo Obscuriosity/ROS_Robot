@@ -22,36 +22,36 @@ class bumpers:
         self._bumperRsub = rospy.Subscriber('bpr_rf', Bool, self.rbprCB)
         self._reaction = rospy.Publisher('reaction', Twist, queue_size=10)
 
-        def lbprCB(self, msg):
-            if msg.data is True:
-                rospy.loginfo("Left bumper hit")
-                self._reaction.publish(stop())
+    def lbprCB(self, msg):
+        if msg.data is True:
+            rospy.loginfo("Left bumper hit")
+            self._reaction.publish(self.stop())
 
-        def fbprCB(self, msg):
-            if msg.data is True:
-                rospy.loginfo("Front bumper hit")
-                self._reaction.publish(stop())
+    def fbprCB(self, msg):
+        if msg.data is True:
+            rospy.loginfo("Front bumper hit")
+            self._reaction.publish(self.stop())
 
-        def rbprCB(self, msg):
-            if msg.data is True:
-                rospy.loginfo("Right bumper hit")
-                self._reaction.publish(stop())
+    def rbprCB(self, msg):
+        if msg.data is True:
+            rospy.loginfo("Right bumper hit")
+            self._reaction.publish(self.stop())
 
-        def stop(self):
-            self._vel_msg.linear.x = 0
-            self._vel_msg.linear.y = 0
-            self._vel_msg.linear.z = 0
-            self._vel_msg.angular.x = 0
-            self._vel_msg.angular.y = 0
-            self._vel_msg.angular.z = 0
+    def stop(self):
+        self._vel_msg.linear.x = 0
+        self._vel_msg.linear.y = 0
+        self._vel_msg.linear.z = 0
+        self._vel_msg.angular.x = 0
+        self._vel_msg.angular.y = 0
+        self._vel_msg.angular.z = 0
 
-        def rotateLeft(self):
-            self._vel_msg.linear.x = 0
-            self._vel_msg.linear.y = 0
-            self._vel_msg.linear.z = 0
-            self._vel_msg.angular.x = 0
-            self._vel_msg.angular.y = 0
-            self._vel_msg.angular.z = 0.01
+    def rotateLeft(self):
+        self._vel_msg.linear.x = 0
+        self._vel_msg.linear.y = 0
+        self._vel_msg.linear.z = 0
+        self._vel_msg.angular.x = 0
+        self._vel_msg.angular.y = 0
+        self._vel_msg.angular.z = 0.01
 
 
 def main():
