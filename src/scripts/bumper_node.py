@@ -25,17 +25,20 @@ class bumpers:
     def lbprCB(self, msg):
         if msg.data is True:
             rospy.loginfo("Left bumper hit")
-            self._reaction.publish(self.stop())
+            self.stop()
+            self._reaction.publish(self._vel_msg)
 
     def fbprCB(self, msg):
         if msg.data is True:
             rospy.loginfo("Front bumper hit")
-            self._reaction.publish(self.stop())
+            self.stop()
+            self._reaction.publish(self._vel_msg)
 
     def rbprCB(self, msg):
         if msg.data is True:
             rospy.loginfo("Right bumper hit")
-            self._reaction.publish(self.stop())
+            self.stop()
+            self._reaction.publish(self._vel_msg)
 
     def stop(self):
         self._vel_msg.linear.x = 0
