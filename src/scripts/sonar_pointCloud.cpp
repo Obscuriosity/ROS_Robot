@@ -9,7 +9,6 @@ void snr_1_CB(const sensor_msgs::Range::ConstPtr& msg)
   cloud.points[0].x = msg.range;
   cloud.points[0].y = 0;
   cloud.points[0].z = 0;
-  cloud.channels[0].values[0] = ;
 }
 
 int main(int argc, char** argv){
@@ -30,21 +29,9 @@ int main(int argc, char** argv){
 
     cloud.points.resize(num_points);
 
-    //we'll also add an intensity channel to the cloud - Why?
-    cloud.channels.resize(1);
-    cloud.channels[0].name = "intensities";
-    cloud.channels[0].values.resize(num_points);
-
-    //generate some fake data for our point cloud
-    for(unsigned int i = 0; i < num_points; ++i){
-      cloud.points[i].x = 1 + count;
-      cloud.points[i].y = 2 + count;
-      cloud.points[i].z = 3 + count;
-      cloud.channels[0].values[i] = 100 + count;
     }
 
     cloud_pub.publish(cloud);
-    ++count;
     r.sleep();
   }
 }
