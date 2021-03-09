@@ -111,36 +111,36 @@ class diffDrive:
     def lfencCB(self, enclf):
         self._lForstateData = enclf.data - self._lForprevStateData
         self._lForprevStateData = enclf.data
-        print("----------Left Ticks FOR", self._lForstateData)
+        # print("----------Left Ticks FOR", self._lForstateData)
         self._lstate = self._lForstateData - self._lBacstateData
         self._lstatePub.publish(self._lstate)
 
     def lbencCB(self, enclb):
         self._lBacstateData = enclb.data - self._lBacprevStateData
         self._lBacprevStateData = enclb.data
-        print("----------Left Ticks BAC", self._lBacstateData)
+        # print("----------Left Ticks BAC", self._lBacstateData)
 
     def rfencCB(self, encrf):
         self._rForstateData = encrf.data - self._rForprevStateData
         self._rForprevStateData = encrf.data
-        print("---------Right Ticks FOR", self._rForstateData)
+        # print("---------Right Ticks FOR", self._rForstateData)
         self._rstate = self._rForstateData - self._rBacstateData
         self._rstatePub.publish(self._rstate)
 
     def rbencCB(self, encrb):
         self._rBacstateData = encrb.data - self._rBacprevStateData
         self._rBacprevStateData = encrb.data
-        print("---------Right Ticks BAC", self._rBacstateData)
+        # print("---------Right Ticks BAC", self._rBacstateData)
 
     def lmotorCB(self, lpwm):
         self._leftPWM += lpwm.data
-        print("Left PWM", self._leftPWM)
+        # print("Left PWM", self._leftPWM)
         self._leftPWM = max(min(self._leftPWM, 100), -100)
         self._leftWheel.run(self._leftPWM)
 
     def rmotorCB(self, rpwm):
         self._rightPWM += rpwm.data
-        print("Right PWM", self._rightPWM)
+        # print("Right PWM", self._rightPWM)
         self._rightPWM = max(min(self._rightPWM, 100), -100)
         self._rightWheel.run(self._rightPWM)
 
@@ -156,6 +156,8 @@ class diffDrive:
 
     def _set_motor_speeds(self):
         if self.speed == 0 and self.spin == 0:
+            leftSetpoint = 0
+            rightSetpoint = 0
             self._lPIDenablePub.publish(False)
             self._rPIDenablePub.publish(False)
             self._leftWheel.stop()
@@ -190,6 +192,8 @@ class diffDrive:
         #
         # Publish setpoints
         #
+        rospy.loginfo("Left  setpoint = ", leftSetpoint)
+        rospy.loginfo("Right setpoint = ", rightSetpoint)
         self._lsetpointPub.publish(leftSetpoint)
         self._rsetpointPub.publish(rightSetpoint)
 
