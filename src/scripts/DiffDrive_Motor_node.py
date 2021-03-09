@@ -192,8 +192,8 @@ class diffDrive:
         #
         # Publish setpoints
         #
-        rospy.loginfo("Left  setpoint = ", leftSetpoint)
-        rospy.loginfo("Right setpoint = ", rightSetpoint)
+        rospy.loginfo("Left  setpoint = %s", leftSetpoint)
+        rospy.loginfo("Right setpoint = %s", rightSetpoint)
         self._lsetpointPub.publish(leftSetpoint)
         self._rsetpointPub.publish(rightSetpoint)
 
