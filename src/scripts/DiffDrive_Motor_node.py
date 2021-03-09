@@ -190,7 +190,7 @@ class diffDrive:
             # 1 rotation is 990ticks
             #
             leftSetpoint = (left_target_rpm/600) * self._leftTPR
-            rightSetpoint = (right_target_rpm/600) * self._rightTPRprint("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
+            rightSetpoint = (right_target_rpm/600) * self._rightTPR
         #
         # Publish setpoints
         #
