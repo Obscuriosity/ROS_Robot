@@ -5,6 +5,7 @@ import rospy
 import math
 from DCMotor import DCMotor as DCM
 from std_msgs.msg import Float64
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 
@@ -69,6 +70,13 @@ class diffDrive:
         self._rsetpointPub = rospy.Publisher('rsetpoint', Float64, queue_size=10)
         self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
         self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
+        self._lPIDenablePub = rospy.Publisher('lpid_enable', Bool, queue_size=10)
+        self._rPIDenablePub = rospy.Publisher('rpid_enable', Bool, queue_size=10)
+
+        rospy.loginfo("Started DiffDrive Motor Node")
+        # Publish initial setpoints as zero
+        self._lsetpointPub.publish(0.0)
+        self._rsetpointPub.publish(0.0)
 
     def _cmd_vel_CB(self, msg):
         self.speed = msg.linear.x
@@ -148,8 +156,8 @@ class diffDrive:
 
     def _set_motor_speeds(self):
         if self.speed == 0 and self.spin == 0:
-            leftSetpoint = 0
-            rightSetpoint = 0
+            self._lPIDenablePub.publish(False)
+            self._rPIDenablePub.publish(False)
             self._leftWheel.stop()
             self._rightWheel.stop()
         else:
@@ -188,6 +196,8 @@ class diffDrive:
 
 def main():
     rospy.init_node('motorControl')
+    joy_speed = rospy.get_param("~joySpeed", 0.1)
+    joy_spin = rospy.get_param("~joySpin", 0.05)
     diffDrive(22, 23, 27, 18)
     rospy.spin()
 
