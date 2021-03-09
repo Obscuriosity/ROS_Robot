@@ -6,7 +6,7 @@
     <remap from="lsetpoint" to="/left_wheel/setpoint"/>
     <remap from="rsetpoint" to="/right_wheel/setpoint"/>
     <remap from="lpid_enable" to="/left_wheel/pid_enable"/>
-    <remap from="rpid_enable" to="/left_wheel/pid_enable"/>
+    <remap from="rpid_enable" to="/right_wheel/pid_enable"/>
     <node name="left_wheel_pid" pkg="pid" type="controller" ns="left_wheel">
           <param name="Kp" value="0.4" />
           <param name="Ki" value="0.14" />

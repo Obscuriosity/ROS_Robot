@@ -163,6 +163,9 @@ class diffDrive:
             self._leftWheel.stop()
             self._rightWheel.stop()
         else:
+            #Enable PID on both wheel
+            self._lPIDenablePub.publish(True)
+            self._rPIDenablePub.publish(True)
             #
             # Figure out the speed of each wheel based on spin: each wheel covers
             # self._wheel_base meters in one radian, so the target speed for each wheel
@@ -187,8 +190,7 @@ class diffDrive:
             # 1 rotation is 990ticks
             #
             leftSetpoint = (left_target_rpm/600) * self._leftTPR
-            rightSetpoint = (right_target_rpm/600) * self._rightTPR
-            print("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
+            rightSetpoint = (right_target_rpm/600) * self._rightTPRprint("leftSetpoint ", leftSetpoint, " rightSetpoint ", rightSetpoint)
         #
         # Publish setpoints
         #
@@ -200,8 +202,8 @@ class diffDrive:
 
 def main():
     rospy.init_node('motorControl')
-    joy_speed = rospy.get_param("~joySpeed", 0.1)
-    joy_spin = rospy.get_param("~joySpin", 0.05)
+    joy_speed = rospy.set_param("~joySpeed", 0.1)
+    joy_spin = rospy.set_param("~joySpin", 0.05)
     diffDrive(22, 23, 27, 18)
     rospy.spin()
 
