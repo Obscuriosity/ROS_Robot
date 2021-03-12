@@ -1,5 +1,7 @@
 #! /usr/bin/env python
-# create diff drive class
+# Base Controller based on Diff Drive motor node without
+# monitoring the encoders which will be passed to an
+# odometry/robot state controller/publisher.
 
 import rospy
 import math
@@ -10,7 +12,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 
 
-class diffDrive:
+class baseController:
     ''' Differential drive node for use with DCMotor script
 
         Subscribe to encoder readings from Arduino:
@@ -41,26 +43,12 @@ class diffDrive:
         self._leftWheel = DCM(lfPin, lbPin)
         self._rightWheel = DCM(rfPin, rbPin)
 
-        self._lstate = 0.0
-        self._rstate = 0.0
-        self._lForstateData = 0.0
-        self._lBacstateData = 0.0
-        self._rForstateData = 0.0
-        self._rBacstateData = 0.0
-        self._lForprevStateData = 0.0
-        self._lBacprevStateData = 0.0
-        self._rForprevStateData = 0.0
-        self._rBacprevStateData = 0.0
         self._leftPWM = 0.0
         self._rightPWM = 0.0
 
         self.speed = 0.0
         self.spin = 0.0
 
-        self._lfencoderSub = rospy.Subscriber('enc_lf', Float64, self.lfencCB)
-        self._lbencoderSub = rospy.Subscriber('enc_lb', Float64, self.lbencCB)
-        self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
-        self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
         self._lmotorSub = rospy.Subscriber('lcontrol_effort', Float64, self.lmotorCB)
         self._rmotorSub = rospy.Subscriber('rcontrol_effort', Float64, self.rmotorCB)
         self._cmd_velSub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_CB)
@@ -68,8 +56,6 @@ class diffDrive:
 
         self._lsetpointPub = rospy.Publisher('lsetpoint', Float64, queue_size=10)
         self._rsetpointPub = rospy.Publisher('rsetpoint', Float64, queue_size=10)
-        self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
-        self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
         self._lPIDenablePub = rospy.Publisher('lpid_enable', Bool, queue_size=10)
         self._rPIDenablePub = rospy.Publisher('rpid_enable', Bool, queue_size=10)
 
@@ -107,30 +93,6 @@ class diffDrive:
             self.spin = 0
 
         self._set_motor_speeds()
-
-    def lfencCB(self, enclf):
-        self._lForstateData = enclf.data - self._lForprevStateData
-        self._lForprevStateData = enclf.data
-        # print("----------Left Ticks FOR", self._lForstateData)
-        self._lstate = self._lForstateData - self._lBacstateData
-        self._lstatePub.publish(self._lstate)
-
-    def lbencCB(self, enclb):
-        self._lBacstateData = enclb.data - self._lBacprevStateData
-        self._lBacprevStateData = enclb.data
-        # print("----------Left Ticks BAC", self._lBacstateData)
-
-    def rfencCB(self, encrf):
-        self._rForstateData = encrf.data - self._rForprevStateData
-        self._rForprevStateData = encrf.data
-        # print("---------Right Ticks FOR", self._rForstateData)
-        self._rstate = self._rForstateData - self._rBacstateData
-        self._rstatePub.publish(self._rstate)
-
-    def rbencCB(self, encrb):
-        self._rBacstateData = encrb.data - self._rBacprevStateData
-        self._rBacprevStateData = encrb.data
-        # print("---------Right Ticks BAC", self._rBacstateData)
 
     def lmotorCB(self, lpwm):
         self._leftPWM += lpwm.data
@@ -201,10 +163,10 @@ class diffDrive:
 
 
 def main():
-    rospy.init_node('motorControl')
+    rospy.init_node('base controller')
     rospy.set_param("~joySpeed", 0.1)
     rospy.set_param("~joySpin", 0.05)
-    diffDrive(22, 23, 27, 18)
+    baseController(22, 23, 27, 18)
     rospy.spin()
 
 

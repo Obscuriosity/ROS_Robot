@@ -54,7 +54,7 @@ class bumpers:
         self._vel_msg.linear.z = 0
         self._vel_msg.angular.x = 0
         self._vel_msg.angular.y = 0
-        self._vel_msg.angular.z = 0.01
+        self._vel_msg.angular.z = 0.001
 
 
 def main():
