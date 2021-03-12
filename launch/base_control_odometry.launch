@@ -28,7 +28,7 @@
         <node
             name="odometry"
             pkg="club_bot3"
-            type="Odometry_node.py"
+            type="odometry_node.py"
         />
     <node name="left_wheel_pid" pkg="pid" type="controller" ns="left_wheel">
           <param name="Kp" value="0.4" />
