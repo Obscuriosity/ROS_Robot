@@ -36,7 +36,6 @@ class odometry:
         self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
         self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
 
-        self.velSub = rospy.Subscriber('cmd_vel', Twist, self.cmdVelCB)
         self.wheels = rospy.Publisher('Terence', JointState, queue_size=10)
         self.odom_pub = rospy.Publisher('odom', Odometry, queue_size=10)
         self.odom_broadcaster = tf.TransformBroadcaster()
@@ -84,7 +83,7 @@ class odometry:
         self._rBacprevStateData = encrb.data
         # print("---------Right Ticks BAC", self._rBacstateData)
 
-    def runMotors(self):
+    def moveWheels(self):
         right_twist_mps = self.spin * self._wheel_base / self._wheel_diameter
         left_twist_mps = -1.0 * self.spin * self._wheel_base / self._wheel_diameter
 
@@ -164,7 +163,7 @@ class odometry:
             self.odom_pub.publish(odom)
 
             last_time = current_time
-            self.runMotors()
+            self.moveWheels()
             rate.sleep()
 
 
