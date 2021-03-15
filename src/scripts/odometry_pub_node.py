@@ -93,7 +93,7 @@ class odometry:
 
         odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
         odom_broadcaster = tf.TransformBroadcaster()
-        rate = rospy.Rate(0.1)
+        rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
             current_time = rospy.Time.now()
