@@ -6,6 +6,7 @@ import rospy
 import tf
 import math
 from math import sin, cos, pi
+from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
@@ -35,6 +36,10 @@ class odometry:
         self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
         self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
 
+        self.velSub = rospy.Subscriber('cmd_vel', Twist, self.cmdVelCB)
+        self.wheels = rospy.Publisher('Terence', JointState, queue_size=10)
+        self.odom_pub = rospy.Publisher('odom', Odometry, queue_size=10)
+        self.odom_broadcaster = tf.TransformBroadcaster()
         self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
         self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
 
@@ -79,6 +84,29 @@ class odometry:
         self._rBacprevStateData = encrb.data
         # print("---------Right Ticks BAC", self._rBacstateData)
 
+    def runMotors(self):
+        right_twist_mps = self.spin * self._wheel_base / self._wheel_diameter
+        left_twist_mps = -1.0 * self.spin * self._wheel_base / self._wheel_diameter
+
+        left_mps = self.speed + left_twist_mps
+        right_mps = self.speed + right_twist_mps
+
+        self.left_wheel_pos -= (1 * left_mps / (pi * self._wheel_diameter))
+        self.right_wheel_pos -= (1 * right_mps / (pi * self._wheel_diameter))
+
+        if self.left_wheel_pos > pi:
+            self.left_wheel_pos = -pi
+        if self.left_wheel_pos < -pi:
+            self.left_wheel_pos = pi
+        if self.right_wheel_pos > pi:
+            self.right_wheel_pos = -pi
+        if self.right_wheel_pos < -pi:
+            self.right_wheel_pos = pi
+
+        self.Terence.position[0] = self.left_wheel_pos
+        self.Terence.position[1] = self.right_wheel_pos
+        self.wheels.publish(self.Terence)
+
     def move_robot(self):
         x = 0.0
         y = 0.0
@@ -91,8 +119,6 @@ class odometry:
         current_time = rospy.Time.now()
         last_time = rospy.Time.now()
 
-        odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
-        odom_broadcaster = tf.TransformBroadcaster()
         rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
@@ -138,6 +164,7 @@ class odometry:
             self.odom_pub.publish(odom)
 
             last_time = current_time
+            self.runMotors()
             rate.sleep()
 
 
