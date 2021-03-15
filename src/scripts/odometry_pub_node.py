@@ -114,7 +114,7 @@ class odometry:
             odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
 
             # first, we'll publish the transform over tf
-            odom_broadcaster.sendTransform(
+            self.odom_broadcaster.sendTransform(
                 (x, y, 0.),
                 odom_quat,
                 current_time,
@@ -135,7 +135,7 @@ class odometry:
             odom.twist.twist = Twist(Vector3(vx, vy, 0), Vector3(0, 0, vth))
 
             # publish the message
-            odom_pub.publish(odom)
+            self.odom_pub.publish(odom)
 
             last_time = current_time
             rate.sleep()
