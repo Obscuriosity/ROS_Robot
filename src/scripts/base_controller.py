@@ -28,18 +28,9 @@ class baseController:
         name: str
     '''
 
-    def __init__(self, lfPin, lbPin, rfPin, rbPin,
-                 wheel_diameter=0.08, wheel_base=0.196,
-                 leftMax_RPM=107, rightMaxRPM=107,
-                 leftTicksPerRotation=990, rightTicksPerRotation=990):
+    def __init__(self, lfPin, lbPin, rfPin, rbPin):
 
-        #  Physical properties of the differential motor pair:
-        self._leftMaxRPM = leftMax_RPM
-        self._rightMaxRPM = rightMaxRPM
-        self._wheel_diameter = wheel_diameter
-        self._wheel_base = wheel_base
-        self._leftTPR = leftTicksPerRotation
-        self._rightTPR = rightTicksPerRotation
+        #  Pin numbers of the differential motor pair:
         self._leftWheel = DCM(lfPin, lbPin)
         self._rightWheel = DCM(rfPin, rbPin)
 
@@ -59,7 +50,22 @@ class baseController:
         self._lPIDenablePub = rospy.Publisher('lpid_enable', Bool, queue_size=10)
         self._rPIDenablePub = rospy.Publisher('rpid_enable', Bool, queue_size=10)
 
-        rospy.loginfo("Started DiffDrive Motor Node")
+        rospy.loginfo("checking for Robot Parameters")
+        robotParams = rospy.search_param('/Robot name')
+        if robotParams:
+            name = rospy.get_param('/Robot name')
+            rospy.loginfo("Robot Parameters loaded for : %s", name)
+        else:
+            rospy.logwarn("Robot Parameters not loaded")
+        # Retrieve Parameters for physical properties of the robot.
+        self._leftMaxRPM = rospy.get_param('/leftMaxRPM')
+        self._rightMaxRPM = rospy.get_param('/rightMaxRPM')
+        self._wheel_diameter = rospy.get_param('/wheel_diameter')
+        self._wheel_base = rospy.get_param('/wheel_base')
+        self._leftTPR = rospy.get_param('/leftTicksPerRotation')
+        self._rightTPR = rospy.get_param('/rightTicksPerRotation')
+
+        rospy.loginfo("Started Base Controller")
         # Publish initial setpoints as zero
         self._lsetpointPub.publish(0.0)
         self._rsetpointPub.publish(0.0)

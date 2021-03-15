@@ -1,0 +1,8 @@
+#Robot Parameters
+Robot name: Terence
+wheel_diameter: 0.08
+wheel_base: 0.196
+leftMax_RPM: 107
+rightMaxRPM: 107
+leftTicksPerRotation: 990
+rightTicksPerRotation: 990
