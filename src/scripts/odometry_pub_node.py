@@ -82,6 +82,7 @@ class odometry:
 
 def main(self):
     rospy.init_node('Odometry_node')
+    rospy.loginfo("Odometry Node Started")
     odometry()
     x = 0.0
     y = 0.0
