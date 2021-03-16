@@ -121,11 +121,11 @@ class odometry:
             current_time = rospy.Time.now()
             lvx = (2 * pi/self._leftTPR) * self._lstate
             rvx = (2 * pi/self._rightTPR) * self._rstate
-            vth = (lvx + rvx) / 2
+            vx = (lvx + rvx) / 2
             # compute odometry in a typical way given the velocities of the robot
             dt = (current_time - last_time).to_sec()
-            delta_x = (lvx * cos(th)) * dt
-            delta_y = (rvx * sin(th)) * dt
+            delta_x = (vx * cos(th)) * dt
+            delta_y = (vx * sin(th)) * dt
             delta_th = vth * dt
 
             x += delta_x
