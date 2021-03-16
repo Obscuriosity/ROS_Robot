@@ -87,9 +87,6 @@ class odometry:
         left_wheel_pos = (2 * pi/self._leftTPR) * self._lstate
         right_wheel_pos = (2 * pi/self._rightTPR) * self._rstate
 
-        left_wheel_pos -= (1 * left_mps / (pi * self._wheel_diameter))
-        right_wheel_pos -= (1 * right_mps / (pi * self._wheel_diameter))
-
         if left_wheel_pos > pi:
             left_wheel_pos = -pi
         if left_wheel_pos < -pi:
@@ -122,11 +119,12 @@ class odometry:
             lvx = (2 * pi/self._leftTPR) * self._lstate
             rvx = (2 * pi/self._rightTPR) * self._rstate
             vx = (lvx + rvx) / 2
+            vth = (lvx - rvx) / self._wheel_base
             # compute odometry in a typical way given the velocities of the robot
             dt = (current_time - last_time).to_sec()
-            delta_x = (vx * cos(th)) * dt
-            delta_y = (vx * sin(th)) * dt
-            delta_th = vth * dt
+            delta_x = (vx * cos(th)) #* dt
+            delta_y = (vx * sin(th)) #* dt
+            delta_th = vth #* dt
 
             x += delta_x
             y += delta_y
