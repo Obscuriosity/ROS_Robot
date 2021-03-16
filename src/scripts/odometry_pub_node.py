@@ -36,11 +36,15 @@ class odometry:
         self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
         self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
 
-        self.wheels = rospy.Publisher('Terence', JointState, queue_size=10)
+        self.wheels = rospy.Publisher('Wheels', JointState, queue_size=10)
         self.odom_pub = rospy.Publisher('odom', Odometry, queue_size=10)
         self.odom_broadcaster = tf.TransformBroadcaster()
         self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
         self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
+
+        self.Wheels = JointState()
+        self.Wheels.name = ["left_wheel_to_motors", "right_wheel_to_motors"]
+        self.Wheels.position = [0.0, 0.0]
 
         rospy.loginfo("checking for Robot Parameters")
         robotParams = rospy.search_param('/Robot name')
@@ -96,9 +100,9 @@ class odometry:
         if right_wheel_pos < -pi:
             right_wheel_pos = pi
 
-        self.Terence.position[0] = left_wheel_pos
-        self.Terence.position[1] = right_wheel_pos
-        self.wheels.publish(self.Terence)
+        self.Wheels.position[0] = left_wheel_pos
+        self.Wheels.position[1] = right_wheel_pos
+        self.wheels.publish(self.Wheels)
 
     def move_robot(self):
         x = 0.0
