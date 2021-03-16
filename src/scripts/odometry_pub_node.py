@@ -127,7 +127,7 @@ class odometry:
             delta_th = vth * dt
 
             x += delta_x
-            y += delta_yj
+            y += delta_y
             th += delta_th
 
             # since all odometry is 6DOF we'll need a quaternion created from yaw
