@@ -119,7 +119,7 @@ class odometry:
             lvx = (pi/self._leftTPR) * self._lstate  # (2 * pi/self._leftTPR) * self._lstate
             rvx = (pi/self._rightTPR) * self._rstate  # (2 * pi/self._rightTPR) * self._rstate
             vx = (lvx + rvx) / 2
-            vth = (lvx - rvx) / self._wheel_base
+            vth = -(lvx - rvx) / self._wheel_base
             # compute odometry in a typical way given the velocities of the robot
             dt = (current_time - last_time).to_sec()
             delta_x = (vx * cos(th)) * dt
@@ -127,7 +127,7 @@ class odometry:
             delta_th = vth * dt
 
             x += delta_x
-            y += delta_y
+            y += delta_yj
             th += delta_th
 
             # since all odometry is 6DOF we'll need a quaternion created from yaw
