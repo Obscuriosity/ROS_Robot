@@ -84,26 +84,23 @@ class odometry:
         # print("---------Right Ticks BAC", self._rBacstateData)
 
     def moveWheels(self):
-        right_twist_mps = self.spin * self._wheel_base / self._wheel_diameter
-        left_twist_mps = -1.0 * self.spin * self._wheel_base / self._wheel_diameter
+        left_wheel_pos = (2 * pi/self._leftTPR) * self._lstate
+        right_wheel_pos = (2 * pi/self._rightTPR) * self._rstate
 
-        left_mps = self.speed + left_twist_mps
-        right_mps = self.speed + right_twist_mps
+        left_wheel_pos -= (1 * left_mps / (pi * self._wheel_diameter))
+        right_wheel_pos -= (1 * right_mps / (pi * self._wheel_diameter))
 
-        self.left_wheel_pos -= (1 * left_mps / (pi * self._wheel_diameter))
-        self.right_wheel_pos -= (1 * right_mps / (pi * self._wheel_diameter))
+        if left_wheel_pos > pi:
+            left_wheel_pos = -pi
+        if left_wheel_pos < -pi:
+            left_wheel_pos = pi
+        if right_wheel_pos > pi:
+            right_wheel_pos = -pi
+        if right_wheel_pos < -pi:
+            right_wheel_pos = pi
 
-        if self.left_wheel_pos > pi:
-            self.left_wheel_pos = -pi
-        if self.left_wheel_pos < -pi:
-            self.left_wheel_pos = pi
-        if self.right_wheel_pos > pi:
-            self.right_wheel_pos = -pi
-        if self.right_wheel_pos < -pi:
-            self.right_wheel_pos = pi
-
-        self.Terence.position[0] = self.left_wheel_pos
-        self.Terence.position[1] = self.right_wheel_pos
+        self.Terence.position[0] = left_wheel_pos
+        self.Terence.position[1] = right_wheel_pos
         self.wheels.publish(self.Terence)
 
     def move_robot(self):
@@ -163,7 +160,7 @@ class odometry:
             self.odom_pub.publish(odom)
 
             last_time = current_time
-            self.moveWheels()
+            # self.moveWheels()
             rate.sleep()
 
 
