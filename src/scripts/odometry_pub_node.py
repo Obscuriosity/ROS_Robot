@@ -116,8 +116,8 @@ class odometry:
 
         while not rospy.is_shutdown():
             current_time = rospy.Time.now()
-            lvx = (2 * pi/self._leftTPR) * self._lstate
-            rvx = (2 * pi/self._rightTPR) * self._rstate
+            lvx = (pi/self._leftTPR) * self._lstate  # (2 * pi/self._leftTPR) * self._lstate
+            rvx = (pi/self._rightTPR) * self._rstate  # (2 * pi/self._rightTPR) * self._rstate
             vx = (lvx + rvx) / 2
             vth = (lvx - rvx) / self._wheel_base
             # compute odometry in a typical way given the velocities of the robot
