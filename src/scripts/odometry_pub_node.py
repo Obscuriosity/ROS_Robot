@@ -158,7 +158,7 @@ class odometry:
             self.odom_pub.publish(odom)
 
             last_time = current_time
-            # self.moveWheels()
+            self.moveWheels()
             rate.sleep()
 
 
