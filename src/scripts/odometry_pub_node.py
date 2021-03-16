@@ -122,8 +122,8 @@ class odometry:
             vth = (lvx - rvx) / self._wheel_base
             # compute odometry in a typical way given the velocities of the robot
             dt = (current_time - last_time).to_sec()
-            delta_x = (vx * sin(th)) * dt
-            delta_y = (vx * cos(th)) * dt
+            delta_x = (vx * cos(th)) * dt
+            delta_y = (vx * sin(th)) * dt
             delta_th = vth * dt
 
             x += delta_x
