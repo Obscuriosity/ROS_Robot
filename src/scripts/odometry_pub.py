@@ -13,17 +13,23 @@ from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 class odometry:
     ''' Node to oversee odometry information.
         Publishes odometry information for the navigation stack.
+        [ERROR] [1616183959.814142]: bad callback: <function lstateCB at 0x74f3f8f0>
+Traceback (most recent call last):
+  File "/opt/ros/melodic/lib/python2.7/dist-packages/rospy/topics.py", line 750, in _invoke_callback
+    cb(msg)
+TypeError: lstateCB() takes exactly 2 arguments (1 given)
+
+[ERROR] [1616183959.822472]: bad callback: <function rstateCB at 0x74f3f930>
+Traceback (most recent call last):
+  File "/opt/ros/melodic/lib/python2.7/dist-packages/rospy/topics.py", line 750, in _invoke_callback
+    cb(msg)
+TypeError: rstateCB() takes exactly 2 arguments (1 given)
+
     '''
 
     def __init__(self):
         self._lstate = 0.0
         self._rstate = 0.0
-
-        def lstateCB(self, lstat):
-            self._lstate = lstat.data
-
-        def rstateCB(self, rstat):
-            self._rstate = rstat.data
 
         self.lstateSub = rospy.Subscriber('lstate', Float64, lstateCB)
         self.rstateSub = rospy.Subscriber('rstate', Float64, rstateCB)
@@ -43,6 +49,12 @@ class odometry:
         else:
             rospy.logerror("Robot Parameters not loaded")
         rospy.loginfo("Odometry Publisher Node running")
+
+    def lstateCB(self, lstat):
+        self._lstate = lstat.data
+
+    def rstateCB(self, rstat):
+        self._rstate = rstat.data
 
     def move_robot(self):
         x = 0.0
