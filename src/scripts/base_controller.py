@@ -28,11 +28,7 @@ class baseController:
         name: str
     '''
 
-    def __init__(self, lfPin, lbPin, rfPin, rbPin):
-
-        #  Pin numbers of the differential motor pair:
-        self._leftWheel = DCM(lfPin, lbPin)
-        self._rightWheel = DCM(rfPin, rbPin)
+    def __init__(self):
 
         self._leftPWM = 0.0
         self._rightPWM = 0.0
@@ -55,15 +51,23 @@ class baseController:
         if robotParams:
             name = rospy.get_param('/Robot name')
             rospy.loginfo("Robot Parameters loaded for : %s", name)
+            # Retrieve Parameters for physical properties of the robot.
+            self._leftMaxRPM = rospy.get_param('/leftMaxRPM')
+            self._rightMaxRPM = rospy.get_param('/rightMaxRPM')
+            self._wheel_diameter = rospy.get_param('/wheel_diameter')
+            self._wheel_base = rospy.get_param('/wheel_base')
+            self._leftTPR = rospy.get_param('/leftTicksPerRotation')
+            self._rightTPR = rospy.get_param('/rightTicksPerRotation')
+            self._lfPin = rospy.get_param('/leftForwardPin')
+            self._lbPin = rospy.get_param('/leftBackwardPin')
+            self._rfPin = rospy.get_param('/rightForwardPin')
+            self._rbPin = rospy.get_param('/rightBackwardPin')
         else:
-            rospy.logwarn("Robot Parameters not loaded")
-        # Retrieve Parameters for physical properties of the robot.
-        self._leftMaxRPM = rospy.get_param('/leftMaxRPM')
-        self._rightMaxRPM = rospy.get_param('/rightMaxRPM')
-        self._wheel_diameter = rospy.get_param('/wheel_diameter')
-        self._wheel_base = rospy.get_param('/wheel_base')
-        self._leftTPR = rospy.get_param('/leftTicksPerRotation')
-        self._rightTPR = rospy.get_param('/rightTicksPerRotation')
+            rospy.logerror("Robot Parameters not loaded")
+
+        #  Set pin numbers of the differential motor pair:
+        self._leftWheel = DCM(self._lfPin, self._lbPin)
+        self._rightWheel = DCM(self._rfPin, self._rbPin)
 
         rospy.loginfo("Started Base Controller")
         # Publish initial setpoints as zero
@@ -73,31 +77,6 @@ class baseController:
     def _cmd_vel_CB(self, msg):
         self.speed = msg.linear.x
         self.spin = msg.angular.z
-        self._set_motor_speeds()
-
-    def _joyCB(self, msg):
-        '''Translate XBox buttons into speed and spin
-
-        Just use the left joystick (for now):
-        LSB left/right  axes[0]     +1 (left) to -1 (right)
-        LSB up/down     axes[1]     +1 (up) to -1 (back)
-        LB              buttons[5]  1 pressed, 0 otherwise
-        '''
-
-        if abs(msg.axes[0]) > 0.10:
-            self.spin = msg.axes[0]
-        else:
-            self.spin = 0.0
-
-        if abs(msg.axes[1]) > 0.10:
-            self.speed = msg.axes[1]
-        else:
-            self.speed = 0.0
-
-        if msg.buttons[5] == 1:
-            self.speed = 0
-            self.spin = 0
-
         self._set_motor_speeds()
 
     def lmotorCB(self, lpwm):
@@ -170,9 +149,7 @@ class baseController:
 
 def main():
     rospy.init_node('base controller')
-    rospy.set_param("~joySpeed", 0.1)
-    rospy.set_param("~joySpin", 0.05)
-    baseController(22, 23, 27, 18)
+    baseController()
     rospy.spin()
 
 

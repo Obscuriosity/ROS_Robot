@@ -6,7 +6,6 @@ import rospy
 import tf
 import math
 from math import sin, cos, pi
-from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
@@ -36,30 +35,25 @@ class odometry:
         self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
         self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
 
-        self.wheels = rospy.Publisher('Wheels', JointState, queue_size=10)
         self.odom_pub = rospy.Publisher('odom', Odometry, queue_size=10)
         self.odom_broadcaster = tf.TransformBroadcaster()
         self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
         self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
-
-        self.Wheels = JointState()
-        self.Wheels.name = ["left_wheel_to_motors", "right_wheel_to_motors"]
-        self.Wheels.position = [0.0, 0.0]
 
         rospy.loginfo("checking for Robot Parameters")
         robotParams = rospy.search_param('/Robot name')
         if robotParams:
             name = rospy.get_param('/Robot name')
             rospy.loginfo("Robot Parameters loaded for : %s", name)
+            # Retrieve Parameters for physical properties of the robot.
+            self._leftMaxRPM = rospy.get_param('/leftMaxRPM')
+            self._rightMaxRPM = rospy.get_param('/rightMaxRPM')
+            self._wheel_diameter = rospy.get_param('/wheel_diameter')
+            self._wheel_base = rospy.get_param('/wheel_base')
+            self._leftTPR = rospy.get_param('/leftTicksPerRotation')
+            self._rightTPR = rospy.get_param('/rightTicksPerRotation')
         else:
             rospy.logwarn("Robot Parameters not loaded")
-        # Retrieve Parameters for physical properties of the robot.
-        self._leftMaxRPM = rospy.get_param('/leftMaxRPM')
-        self._rightMaxRPM = rospy.get_param('/rightMaxRPM')
-        self._wheel_diameter = rospy.get_param('/wheel_diameter')
-        self._wheel_base = rospy.get_param('/wheel_base')
-        self._leftTPR = rospy.get_param('/leftTicksPerRotation')
-        self._rightTPR = rospy.get_param('/rightTicksPerRotation')
 
         rospy.loginfo("Started Odometry Node")
 
@@ -86,23 +80,6 @@ class odometry:
         self._rBacstateData = encrb.data - self._rBacprevStateData
         self._rBacprevStateData = encrb.data
         # print("---------Right Ticks BAC", self._rBacstateData)
-
-    def moveWheels(self):
-        left_wheel_pos = (2 * pi/self._leftTPR) * self._lstate
-        right_wheel_pos = (2 * pi/self._rightTPR) * self._rstate
-
-        if left_wheel_pos > pi:
-            left_wheel_pos = -pi
-        if left_wheel_pos < -pi:
-            left_wheel_pos = pi
-        if right_wheel_pos > pi:
-            right_wheel_pos = -pi
-        if right_wheel_pos < -pi:
-            right_wheel_pos = pi
-
-        self.Wheels.position[0] = left_wheel_pos
-        self.Wheels.position[1] = right_wheel_pos
-        self.wheels.publish(self.Wheels)
 
     def move_robot(self):
         x = 0.0
@@ -162,7 +139,6 @@ class odometry:
             self.odom_pub.publish(odom)
 
             last_time = current_time
-            self.moveWheels()
             rate.sleep()
 
 

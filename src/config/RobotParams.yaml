@@ -6,3 +6,7 @@ leftMaxRPM: 107
 rightMaxRPM: 107
 leftTicksPerRotation: 990
 rightTicksPerRotation: 990
+leftForwardPin: 22
+leftBackwardPin: 23
+rightForwardPin: 27
+rightBackwardPin: 18
