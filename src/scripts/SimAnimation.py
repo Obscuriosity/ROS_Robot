@@ -9,10 +9,14 @@ from sensor_msgs.msg import JointState
 
 
 def main():
+    rospy.init_node('jointstate_publisher')
+    rospy.loginfo("Joint State Publisher Node Started")
     Wheels = JointState()
     Wheels.name = ["left_wheel_to_motors", "right_wheel_to_motors"]
     Wheels.position = [0.0, 0.0]
+    # Create wheel joint state publisher
     wheels = rospy.Publisher('Wheels', JointState, queue_size=10)
+    # Look for robot Parameters
     robotParams = rospy.search_param('/Robot name')
     if robotParams:
         name = rospy.get_param('/Robot name')

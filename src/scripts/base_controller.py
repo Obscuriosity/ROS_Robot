@@ -39,7 +39,6 @@ class baseController:
         self._lmotorSub = rospy.Subscriber('lcontrol_effort', Float64, self.lmotorCB)
         self._rmotorSub = rospy.Subscriber('rcontrol_effort', Float64, self.rmotorCB)
         self._cmd_velSub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_CB)
-        self._joySub = rospy.Subscriber('joy', Joy, self._joyCB)
 
         self._lsetpointPub = rospy.Publisher('lsetpoint', Float64, queue_size=10)
         self._rsetpointPub = rospy.Publisher('rsetpoint', Float64, queue_size=10)
