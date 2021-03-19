@@ -27,10 +27,23 @@
         />
 
         <node
+            name="encoder_publisher"
+            pkg="club_bot3"
+            type="encoder_pub.py"
+        />
+
+        <node
+            name="bumper"
+            pkg="club_bot3"
+            type="bumper_node.py"
+        />
+
+        <node
             name="odometry"
             pkg="club_bot3"
-            type="odometry_pub_node.py"
+            type="odometry_pub.py"
         />
+        
     <node name="left_wheel_pid" pkg="pid" type="controller" ns="left_wheel">
           <param name="Kp" value="0.4" />
           <param name="Ki" value="0.14" />

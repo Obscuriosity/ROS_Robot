@@ -9,7 +9,6 @@ from DCMotor import DCMotor as DCM
 from std_msgs.msg import Float64
 from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Joy
 
 
 class baseController:
@@ -19,13 +18,9 @@ class baseController:
         enc_lf, enc_lb, enc_rf, enc_rb for state readings.
         Subscribe to control_effort for PID control of motors.
         Subscribe to /cmd_vel to accept twist messages.
-        Subscribe to /joy to accept xbox joxstick input.
 
         Publish state readings to PID package.
         Publish pwm to motors.
-
-        Parameters-
-        name: str
     '''
 
     def __init__(self):
@@ -68,7 +63,7 @@ class baseController:
         self._leftWheel = DCM(self._lfPin, self._lbPin)
         self._rightWheel = DCM(self._rfPin, self._rbPin)
 
-        rospy.loginfo("Started Base Controller")
+        rospy.loginfo("Base Controller running")
         # Publish initial setpoints as zero
         self._lsetpointPub.publish(0.0)
         self._rsetpointPub.publish(0.0)
@@ -148,6 +143,7 @@ class baseController:
 
 def main():
     rospy.init_node('base controller')
+    rospy.loginfo("Base Controller starting")
     baseController()
     rospy.spin()
 

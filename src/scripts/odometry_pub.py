@@ -4,7 +4,6 @@
 
 import rospy
 import tf
-import math
 from math import sin, cos, pi
 from std_msgs.msg import Float64
 from nav_msgs.msg import Odometry
@@ -13,32 +12,23 @@ from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 
 class odometry:
     ''' Node to oversee odometry information.
-        For use with base_controller and PID.
-        Publishes motor state data to PID via encoder call backs.
-        Todo: incorporate Rviz JointState nav_msgs odometry and tf
+        Publishes odometry information for the navigation stack.
     '''
 
     def __init__(self):
         self._lstate = 0.0
         self._rstate = 0.0
-        self._lForstateData = 0.0
-        self._lBacstateData = 0.0
-        self._rForstateData = 0.0
-        self._rBacstateData = 0.0
-        self._lForprevStateData = 0.0
-        self._lBacprevStateData = 0.0
-        self._rForprevStateData = 0.0
-        self._rBacprevStateData = 0.0
 
-        self._lfencoderSub = rospy.Subscriber('enc_lf', Float64, self.lfencCB)
-        self._lbencoderSub = rospy.Subscriber('enc_lb', Float64, self.lbencCB)
-        self._rfencoderSub = rospy.Subscriber('enc_rf', Float64, self.rfencCB)
-        self._rbencoderSub = rospy.Subscriber('enc_rb', Float64, self.rbencCB)
+        def lstateCB(self, lstat):
+            self._lstate = lstat.data
 
+        def rstateCB(self, rstat):
+            self._rstate = rstat.data
+
+        self.lstateSub = rospy.Subscriber('lstate', Float64, lstateCB)
+        self.rstateSub = rospy.Subscriber('rstate', Float64, rstateCB)
         self.odom_pub = rospy.Publisher('odom', Odometry, queue_size=10)
         self.odom_broadcaster = tf.TransformBroadcaster()
-        self._lstatePub = rospy.Publisher('lstate', Float64, queue_size=10)
-        self._rstatePub = rospy.Publisher('rstate', Float64, queue_size=10)
 
         rospy.loginfo("checking for Robot Parameters")
         robotParams = rospy.search_param('/Robot name')
@@ -46,40 +36,13 @@ class odometry:
             name = rospy.get_param('/Robot name')
             rospy.loginfo("Robot Parameters loaded for : %s", name)
             # Retrieve Parameters for physical properties of the robot.
-            self._leftMaxRPM = rospy.get_param('/leftMaxRPM')
-            self._rightMaxRPM = rospy.get_param('/rightMaxRPM')
             self._wheel_diameter = rospy.get_param('/wheel_diameter')
             self._wheel_base = rospy.get_param('/wheel_base')
             self._leftTPR = rospy.get_param('/leftTicksPerRotation')
             self._rightTPR = rospy.get_param('/rightTicksPerRotation')
         else:
-            rospy.logwarn("Robot Parameters not loaded")
-
-        rospy.loginfo("Started Odometry Node")
-
-    def lfencCB(self, enclf):
-        self._lForstateData = enclf.data - self._lForprevStateData
-        self._lForprevStateData = enclf.data
-        # print("----------Left Ticks FOR", self._lForstateData)
-        self._lstate = self._lForstateData - self._lBacstateData
-        self._lstatePub.publish(self._lstate)
-
-    def lbencCB(self, enclb):
-        self._lBacstateData = enclb.data - self._lBacprevStateData
-        self._lBacprevStateData = enclb.data
-        # print("----------Left Ticks BAC", self._lBacstateData)
-
-    def rfencCB(self, encrf):
-        self._rForstateData = encrf.data - self._rForprevStateData
-        self._rForprevStateData = encrf.data
-        # print("---------Right Ticks FOR", self._rForstateData)
-        self._rstate = self._rForstateData - self._rBacstateData
-        self._rstatePub.publish(self._rstate)
-
-    def rbencCB(self, encrb):
-        self._rBacstateData = encrb.data - self._rBacprevStateData
-        self._rBacprevStateData = encrb.data
-        # print("---------Right Ticks BAC", self._rBacstateData)
+            rospy.logerror("Robot Parameters not loaded")
+        rospy.loginfo("Odometry Publisher Node running")
 
     def move_robot(self):
         x = 0.0
@@ -143,8 +106,8 @@ class odometry:
 
 
 def main():
-    rospy.init_node('Odometry_node')
-    rospy.loginfo("Odometry Node Started")
+    rospy.init_node('odometry_publisher')
+    rospy.loginfo("Odometry Publisher Node Starting")
     odom = odometry()
     odom.move_robot()
 
