@@ -63,6 +63,7 @@ def main():
     rospy.init_node('encoder_node')
     rospy.loginfo("Encoder State Node Starting")
     encoders()
+    rospy.spin()
 
 
 if __name__ == '__main__':
